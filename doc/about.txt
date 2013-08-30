@@ -1,0 +1,75 @@
+	+-------------------------------------------+
+	| | | | | | | | | | | | | | | | | | | | | | | <-- Tee Boxes	
+	+-------------------------------------------+                  -
+	|                                           |                  ^
+	|                                           |                  |
+	|                                           |                  |
+	|                                           |                  |
+	|                                           |                  
+	|                                           |                  
+	|                                           |           
+	|                                           |                  
+	|                                           |                  
+	|                                           |            Length of Range
+	|                                           |
+	|     |>                                    |
+	|     |                                     |
+	|                                           |
+	|                            |>             |
+	|                            |              |                  | 
+	|                                           |                  |
+	|                                           |                  |
+	|                                           |                  v
+	+-------------------------------------------+ <-- Back Fence   -
+
+	|<--           width of range            -->|
+	
+	
+	Each robot takes up a 3m x 3m square during each time step,
+	and collects a percentage, r , of all of the balls in that square,
+	so the driving range can be thought of as a matrix, A, with
+	l = (Length of Range)/3 rows and w = (Width of range)/3 columns.
+	The element in row one, column one of A is the upper left most
+	3m x 3m square of the range.
+	
+	Balls are hit out at a rate of k = pois(lambda) balls per timestep,
+	and travel a distance of d = B(n, p) cells, landing in 
+	row d, and column s, where s = unif(1, w) is the width
+	from the left-most cell in the range and a uniformly distributed
+	variable across the width of the range.
+	
+	So, at each timestep, k balls are hit out, and the Roomba
+	is asked to move to move from position (i, j) to any of
+	{(i+1, j),(i-1, j), (i,j+1), (i,j-1)}. If the Roomba is at
+	position (i,j) at time t, it collects c * balls(i, j, t),
+	where balls(i, j, t) is the number of balls in row i, column j
+	at time t.
+	
+	Note that moving to:
+		-(i+1, j) is moving down one square
+		-(i-l, j) is moving up one square
+		-(i, j+1) is moving right one square
+		-(i, j-1) is moving left one square
+	
+	Note that at each timestep, if the roomba is:
+		- in row 1, it cannot move up
+		- in row l, it cannot move down
+		- in column 1, it cannot move to the left
+		- in column w, it cannot move to the right
+	If you try to move in a direction that is prohibited at time t, you will simply
+	stay in the same position at time t+1 and collect c * balls(i, j, t + 1) balls.
+
+	At each timestep, after having hit out the balls, the Simulation that is
+	using an instance of your roomba will call getMove(this) on that instance,
+	which lets you return the Direction you want to move for the next of the
+	time step. Since the Simulation calling getMove() passes a reference to
+	itself in, you can call methods on the Simulation to learn about the state of
+	the driving range and the simulation, like the current position of your roomba,
+	the timestep that this simulation is on, the dimensions of this range, and
+	whether a certain direction is a valid move or not (i,e, is the robot against
+	a fence in a given direction).
+	
+	You can still store information that the Simulation does not provide in
+	the instance of your Roomba, but hopefully the ability to query the Simulation
+	will save you some work and let you focus on your strategy instead of the
+	simulation itself.
